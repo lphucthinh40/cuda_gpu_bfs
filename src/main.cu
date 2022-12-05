@@ -10,7 +10,7 @@ bool in_strlist(const std::string &value, const std::vector<std::string> &array)
     return std::find(array.begin(), array.end(), value) != array.end();
 }
 
-const std::string FILE_PREFIX = "./../data/";
+const std::string FILE_PREFIX = "./data/";
 const std::string FILE_START_IDX_POSTFIX = ".mtx_beg_pos.bin";
 const std::string FILE_ADJ_LIST_POSTFIX = ".mtx_adj_list.bin";
 const std::vector<std::string> DATASETS {"roadNet-CA", "wiki-Talk", "wiki-Vote"};
