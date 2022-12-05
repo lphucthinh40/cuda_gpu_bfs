@@ -6,3 +6,4 @@
 *.cubin
 *.fatbin
 *.o
+run_benchmark
