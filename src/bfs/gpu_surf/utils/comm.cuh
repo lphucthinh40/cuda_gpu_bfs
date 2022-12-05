@@ -54,17 +54,6 @@ static void HandleError( cudaError_t err,
 #define H_ERR( err ) \
   (HandleError( err, __FILE__, __LINE__ ))
 
-__global__ void warm_up_gpu(){
-
-    unsigned int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    float va, vb, vc;
-    va = 0.1f;
-    vb = 0.2f;
-
-    for(int i = 0; i < 10; i++)
-        vc += ((float) tid + va * vb);
-}
-
 template<typename vertex_t, typename index_t>
 void calc_par_opt(
 

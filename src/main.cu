@@ -3,6 +3,10 @@
 #include <algorithm>
 
 #include "graph/graph.hpp"
+#include "helper/warmup.cuh"
+
+#include "bfs/cpu/bfs_cpu.hpp"
+#include "bfs/gpu_simple/bfs_gpu_simple.cuh"
 #include "bfs/gpu_surf/bfs_gpu_surf.cuh"
 
 bool in_strlist(const std::string &value, const std::vector<std::string> &array)
@@ -44,6 +48,10 @@ int main(int argc, char **argv){
     
 	Graph* graph = new Graph(file_start_idx.c_str(), file_adj_list.c_str());
     
+    warm_up_gpu();
+
+    bfs_cpu(graph, src);
+    bfs_gpu_simple(graph, src);
     bfs_gpu_surf(graph, src);
 
     delete graph;

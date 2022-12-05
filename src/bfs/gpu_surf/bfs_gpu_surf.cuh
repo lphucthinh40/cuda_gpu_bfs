@@ -2,11 +2,12 @@
 #define BFS_GPU_SURF_CUH
 
 #include "../../graph/graph.hpp"
+#include "../../helper/wtime.h"
+
 #include "./utils/alloc.cuh"
 #include "./utils/comm.cuh"
 #include "./utils/fqg.cuh"
 #include "./utils/mcpy.cuh"
-#include "./utils/wtime.h"
 #include "./model/model.h"
 
 // BFS Top-Dowm Single Step (PUSH Phase)
@@ -368,7 +369,10 @@ void bfs_gpu_surf(Graph *G, index_t start) {
     vertex_t *fq_bu_curr_sz;    // used for the number of vertices examined at each level, the size must be 1
 	
 	depth_t level = 0;
-
+    
+    double t_start;
+    double t_elapsed;
+    
     // Allocate memory on GPU (check alloc.cuh)
     alloc<vertex_t, index_t, depth_t>::
     alloc_mem(
@@ -404,8 +408,8 @@ void bfs_gpu_surf(Graph *G, index_t start) {
     cudaDeviceSynchronize();
 
     // Warm up GPU
-    warm_up_gpu<<<BLKS_NUM_INIT, THDS_NUM_INIT>>>();
-    cudaDeviceSynchronize();
+    // warm_up_gpu<<<BLKS_NUM_INIT, THDS_NUM_INIT>>>();
+    // cudaDeviceSynchronize();
 
     // Setup temp status array (useful for iterative test)
     H_ERR(cudaMemcpy(sa_d, temp_sa, sizeof(depth_t) * G->verticesCount, cudaMemcpyHostToDevice));
@@ -451,6 +455,7 @@ void bfs_gpu_surf(Graph *G, index_t start) {
 	);
     cudaDeviceSynchronize();
 
+    t_start = wtime();
         
 	bfs_tdbu(
 		sa_d,
@@ -471,6 +476,8 @@ void bfs_gpu_surf(Graph *G, index_t start) {
 	);
     cudaDeviceSynchronize();
 
+    t_elapsed = wtime() - t_start;
+
 	// for validation
 	index_t tr_vert = 0;
 	index_t tr_edge = 0;
@@ -484,12 +491,15 @@ void bfs_gpu_surf(Graph *G, index_t start) {
 		}
 	}
 
-	std::cout << "Started from " << start << std::endl;
-	std::cout << "- traversed " << tr_vert << "/" << G->verticesCount << " vertices" << std::endl;
-	std::cout << "- traversed " << tr_edge << "/" << G->edgesCount << " egdes" << std::endl;
+    printf( "===================================\n"
+            "SURF_GPU_BFS: started from %llu\n"
+            "- traversed %llu/%llu vertices\n"
+            "- traversed %llu/%llu edges\n"
+            "- number of iterations (level): %d\n"
+            "- elapsed time: %f\n"
+    , start, tr_vert, G->verticesCount, tr_edge, G->edgesCount, level+1, t_elapsed);
 
     cudaDeviceSynchronize();
-
 
 	alloc<vertex_t, index_t, depth_t>::
     dealloc_mem(
@@ -510,7 +520,7 @@ void bfs_gpu_surf(Graph *G, index_t start) {
 		fq_bu_curr_sz
     );
 
-    std::cout << "GPU BFS finished" << std::endl;
+    std::cout << "SURF_GPU BFS finished..." << std::endl;
 }
 
 #endif // BFS_GPU_SURF_CUH

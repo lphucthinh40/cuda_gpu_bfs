@@ -76,8 +76,8 @@ struct alloc{
         H_ERR(cudaMalloc((void **) &fq_bu_curr_sz, sizeof(vertex_t)));
         gpu_bytes += sizeof(vertex_t);
 
-        std::cout << "CPU alloc space: " << cpu_bytes << " bytes" << std::endl;
-        std::cout << "GPU alloc space: " << gpu_bytes << " bytes" << std::endl;
+        // std::cout << "CPU alloc space: " << cpu_bytes << " bytes" << std::endl;
+        // std::cout << "GPU alloc space: " << gpu_bytes << " bytes" << std::endl;
     }
 
     inline static __host__ void dealloc_mem(
