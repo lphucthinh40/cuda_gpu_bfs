@@ -6,4 +6,4 @@
 *.cubin
 *.fatbin
 *.o
-run_benchmark
+run_bfs
