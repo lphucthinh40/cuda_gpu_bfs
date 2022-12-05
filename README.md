@@ -14,3 +14,5 @@ Run
 ```
 
 ![Alt text](/output/sample_output.png "output")
+
+Note: Our dataset graphs are not fully connected. Thus, visited_nodes & visited_edges are normally less than total_nodes & total_edges.
